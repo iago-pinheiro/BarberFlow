@@ -1,31 +1,44 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF1A1A1A);
-  static const Color primaryDark = Color(0xFF0D0D0D);
-  static const Color primaryLight = Color(0xFF2D2D2D);
-  static const Color primaryVariant = Color(0xFF3A3A3A);
-  static const Color accent = Color(0xFFC9A227);
-  static const Color accentLight = Color(0xFFE8D5A3);
-  static const Color accentDark = Color(0xFFA6851E);
-  static const Color secondary = Color(0xFF8B0000);
-  static const Color secondaryLight = Color(0xFFB22222);
-  static const Color background = Color(0xFFF5F5F5);
+  AppColors._();
+
+  static const Color primary = Color(0xFF1C1C1E);
+  static const Color primaryDark = Color(0xFF0A0A0B);
+  static const Color primaryLight = Color(0xFF2C2C2E);
+  static const Color accent = Color(0xFFC8A951);
+  static const Color accentLight = Color(0xFFF0E6C8);
+  static const Color accentDark = Color(0xFFA68A3E);
+  static const Color accentBg = Color(0xFFFDF8EC);
+
+  static const Color background = Color(0xFFF7F7F8);
   static const Color surface = Color(0xFFFFFFFF);
-  static const Color surfaceVariant = Color(0xFFF0F0F0);
-  static const Color textPrimary = Color(0xFF1A1A1A);
-  static const Color textSecondary = Color(0xFF6B6B6B);
-  static const Color textHint = Color(0xFF9E9E9E);
+  static const Color surfaceElevated = Color(0xFFFFFFFF);
+  static const Color surfaceVariant = Color(0xFFECECEE);
+
+  static const Color textPrimary = Color(0xFF1C1C1E);
+  static const Color textSecondary = Color(0xFF8E8E93);
+  static const Color textTertiary = Color(0xFFAEAEB2);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
-  static const Color textOnAccent = Color(0xFF1A1A1A);
-  static const Color success = Color(0xFF4CAF50);
-  static const Color successLight = Color(0xFFE8F5E9);
-  static const Color error = Color(0xFFD32F2F);
-  static const Color errorLight = Color(0xFFFFEBEE);
-  static const Color warning = Color(0xFFFF9800);
-  static const Color warningLight = Color(0xFFFFF3E0);
-  static const Color border = Color(0xFFE0E0E0);
-  static const Color divider = Color(0xFFE0E0E0);
-  static const Color shadow = Color(0x1A000000);
-  static const Color goldShimmer = Color(0xFFF5E6B8);
+  static const Color textOnAccent = Color(0xFFFFFFFF);
+
+  static const Color success = Color(0xFF34C759);
+  static const Color successBg = Color(0xFFE8F9ED);
+  static const Color error = Color(0xFFFF3B30);
+  static const Color errorBg = Color(0xFFFFEDEC);
+  static const Color warning = Color(0xFFFF9500);
+  static const Color warningBg = Color(0xFFFFF5E6);
+
+  static const Color border = Color(0xFFE5E5EA);
+  static const Color borderLight = Color(0xFFF2F2F7);
+  static const Color divider = Color(0xFFC6C6C8);
+
+  static const Color shadow = Color(0x0A000000);
+  static const Color shadowDark = Color(0x14000000);
+
+  static const Color iconBg = Color(0xFFF2F2F7);
+  static const Color iconBgDark = Color(0xFFE8E8ED);
+
+  static const Color blue = Color(0xFF007AFF);
+  static const Color blueBg = Color(0xFFE6F2FF);
 }

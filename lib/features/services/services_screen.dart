@@ -1,75 +1,183 @@
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
-import '../../core/constants/app_strings.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/constants/app_dimensions.dart';
+import '../../core/constants/app_strings.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_text_styles.dart';
+import '../../core/constants/app_dimensions.dart';
 import '../../data/models/service_model.dart';
 import '../../data/repositories/service_repository.dart';
-import '../../data/repositories/professional_repository.dart';
 import '../../core/providers/booking_provider.dart';
 
-class ServicesScreen extends StatelessWidget {
+class ServicesScreen extends StatefulWidget {
   const ServicesScreen({super.key});
+
+  @override
+  State<ServicesScreen> createState() => _ServicesScreenState();
+}
+
+class _ServicesScreenState extends State<ServicesScreen> {
+  int _selectedCategoryIndex = 0;
+
+  final _categories = const [
+    (label: 'Todos', icon: Icons.grid_view_rounded),
+    (label: 'Corte', icon: Icons.content_cut_rounded),
+    (label: 'Barba', icon: Icons.auto_fix_high_rounded),
+    (label: 'Sobr.', icon: Icons.brush_rounded),
+    (label: 'Combo', icon: Icons.auto_awesome_rounded),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final serviceRepo = ServiceRepository();
-    final bookingProvider = context.watch<BookingProvider>();
-    final services = serviceRepo.getServices();
+    final allServices = serviceRepo.getServices();
+
+    final filteredServices = _selectedCategoryIndex == 0
+        ? allServices
+        : allServices.where((s) {
+            switch (_selectedCategoryIndex) {
+              case 1: return s.type == ServiceType.haircut;
+              case 2: return s.type == ServiceType.beard;
+              case 3: return s.type == ServiceType.eyebrow;
+              case 4: return s.type == ServiceType.haircutAndBeard;
+              default: return true;
+            }
+          }).toList();
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(AppStrings.servicesTitle),
-        centerTitle: false,
+        title: const Text('Serviços'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search_rounded, size: 22),
+            onPressed: () {},
+          ),
+        ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(AppDimensions.spaceMD),
-        itemCount: services.length,
+      body: Column(
+        children: [
+          _buildCategoryBar(),
+          Expanded(
+            child: filteredServices.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.search_off_rounded, size: 56, color: AppColors.textTertiary),
+                        const SizedBox(height: AppDimensions.spaceMD),
+                        Text('Nenhum serviço nesta categoria', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
+                      ],
+                    ),
+                  )
+                : ListView.separated(
+                    padding: const EdgeInsets.all(AppDimensions.spaceMD),
+                    itemCount: filteredServices.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      return _buildServiceCard(context, filteredServices[index]);
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryBar() {
+    return Container(
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceMD),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: _categories.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final service = services[index];
-          return _buildServiceTile(context, service, bookingProvider);
+          final cat = _categories[index];
+          final isSelected = _selectedCategoryIndex == index;
+          return Center(
+            child: GestureDetector(
+              onTap: () => setState(() => _selectedCategoryIndex = index),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.primary : AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppDimensions.borderRadiusFull),
+                  border: Border.all(
+                    color: isSelected ? AppColors.primary : AppColors.border,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      cat.icon,
+                      size: 16,
+                      color: isSelected ? AppColors.textOnPrimary : AppColors.textSecondary,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      cat.label,
+                      style: AppTextStyles.chip.copyWith(
+                        color: isSelected ? AppColors.textOnPrimary : AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
         },
       ),
     );
   }
 
-  Widget _buildServiceTile(BuildContext context, Service service, BookingProvider bookingProvider) {
+  Widget _buildServiceCard(BuildContext context, Service service) {
+    final iconData = _getServiceIcon(service.type);
+    final iconColor = _getServiceColor(service.type);
+
     return GestureDetector(
       onTap: () {
-        bookingProvider.selectService(service.id);
-        GoRouter.of(context).go('/professionals');
+        context.read<BookingProvider>().selectService(service.id);
+        context.go('/booking');
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: AppDimensions.spaceMD),
-        padding: const EdgeInsets.all(AppDimensions.spaceMD),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMD),
-          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.borderLight),
+          boxShadow: const [
+            BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: Offset(0, 2)),
+          ],
         ),
         child: Row(
           children: [
             Container(
-              width: 56,
-              height: 56,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
-                color: AppColors.primaryLight,
-                borderRadius: BorderRadius.circular(AppDimensions.borderRadiusSM),
+                color: iconColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(14),
               ),
-              child: Center(
-                child: _getServiceIcon(service.type),
-              ),
+              child: Icon(iconData, color: iconColor, size: 26),
             ),
-            const SizedBox(width: AppDimensions.spaceMD),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    service.name,
-                    style: AppTextStyles.heading3,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          service.name,
+                          style: AppTextStyles.subtitle,
+                        ),
+                      ),
+                      _buildTypeBadge(service.type),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -78,22 +186,24 @@ class ServicesScreen extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(Icons.schedule_rounded, size: 14, color: AppColors.textTertiary),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${service.duration} min',
+                        style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'R\$ ${service.price.toStringAsFixed(2)}',
-                  style: AppTextStyles.promoPrice,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${service.duration}${AppStrings.minutes}',
-                  style: AppTextStyles.bodySmall,
-                ),
-              ],
+            const SizedBox(width: 12),
+            Text(
+              'R\$ ${service.price.toStringAsFixed(0)}',
+              style: AppTextStyles.price,
             ),
           ],
         ),
@@ -101,16 +211,44 @@ class ServicesScreen extends StatelessWidget {
     );
   }
 
-  Widget _getServiceIcon(ServiceType type) {
-    switch (type) {
-      case ServiceType.haircut:
-        return const Icon(Icons.content_cut_rounded, color: AppColors.textOnAccent, size: 28);
-      case ServiceType.beard:
-        return const Icon(Icons.format_color_fill_rounded, color: AppColors.textOnAccent, size: 28);
-      case ServiceType.haircutAndBeard:
-        return const Icon(Icons.auto_fix_high_rounded, color: AppColors.textOnAccent, size: 28);
-      case ServiceType.eyebrow:
-        return const Icon(Icons.brush, color: AppColors.textOnAccent, size: 28);
-    }
+  Widget _buildTypeBadge(ServiceType type) {
+    final (label, color) = switch (type) {
+      ServiceType.haircut => ('Corte', AppColors.blue),
+      ServiceType.beard => ('Barba', const Color(0xFF5856D6)),
+      ServiceType.haircutAndBeard => ('Combo', AppColors.accentDark),
+      ServiceType.eyebrow => ('Sobr.', const Color(0xFFFF6B6B)),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: AppTextStyles.caption.copyWith(
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  IconData _getServiceIcon(ServiceType type) {
+    return switch (type) {
+      ServiceType.haircut => Icons.content_cut_rounded,
+      ServiceType.beard => Icons.auto_fix_high_rounded,
+      ServiceType.haircutAndBeard => Icons.auto_awesome_rounded,
+      ServiceType.eyebrow => Icons.brush_rounded,
+    };
+  }
+
+  Color _getServiceColor(ServiceType type) {
+    return switch (type) {
+      ServiceType.haircut => AppColors.blue,
+      ServiceType.beard => const Color(0xFF5856D6),
+      ServiceType.haircutAndBeard => AppColors.accentDark,
+      ServiceType.eyebrow => const Color(0xFFFF6B6B),
+    };
   }
 }
