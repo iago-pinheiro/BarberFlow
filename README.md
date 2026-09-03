@@ -75,6 +75,20 @@ flutter test
 flutter analyze
 ```
 
+## CI/CD
+
+O GitHub Actions valida todo pull request e push para `main` executando:
+
+- análise estática (`flutter analyze`)
+- testes (`flutter test`)
+- build de produção para web (`flutter build web --release`)
+
+Após um push aprovado na `main`, o mesmo artefato gerado é publicado no GitHub Pages.
+
+### Configuração inicial do deploy
+
+No GitHub, acesse **Settings > Pages**, selecione **GitHub Actions** como fonte de publicação e faça um push para `main`. Nenhum secret é necessário para o deploy no GitHub Pages.
+
 ## Estrutura do projeto
 
 ```

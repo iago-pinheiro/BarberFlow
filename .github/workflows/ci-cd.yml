@@ -1,0 +1,83 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-cd-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-and-build:
+    name: Validate and build web
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.1
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze source code
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build web release
+        run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: barberflow-web
+          path: build/web
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.event_name == 'push'
+    needs: validate-and-build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Configure GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: barberflow-web
+          path: build/web
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
