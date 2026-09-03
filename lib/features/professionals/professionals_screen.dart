@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/app_strings.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_dimensions.dart';
@@ -18,7 +17,9 @@ class ProfessionalsScreen extends StatelessWidget {
     final profRepo = ProfessionalRepository();
 
     final professionals = bookingProvider.state.selectedServiceId != null
-        ? profRepo.getAvailableProfessionals(bookingProvider.state.selectedServiceId!)
+        ? profRepo.getAvailableProfessionals(
+            bookingProvider.state.selectedServiceId!,
+          )
         : profRepo.getProfessionals();
 
     return Scaffold(
@@ -29,11 +30,17 @@ class ProfessionalsScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.person_off_rounded, size: 56, color: AppColors.textTertiary),
+                  Icon(
+                    Icons.person_off_rounded,
+                    size: 56,
+                    color: AppColors.textTertiary,
+                  ),
                   const SizedBox(height: AppDimensions.spaceMD),
                   Text(
                     'Nenhum barbeiro disponível',
-                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -41,16 +48,25 @@ class ProfessionalsScreen extends StatelessWidget {
           : ListView.separated(
               padding: const EdgeInsets.all(AppDimensions.spaceMD),
               itemCount: professionals.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
-                return _buildProfessionalCard(context, professionals[index], bookingProvider);
+                return _buildProfessionalCard(
+                  context,
+                  professionals[index],
+                  bookingProvider,
+                );
               },
             ),
     );
   }
 
-  Widget _buildProfessionalCard(BuildContext context, Professional professional, BookingProvider bookingProvider) {
-    final isSelected = bookingProvider.state.selectedProfessionalId == professional.id;
+  Widget _buildProfessionalCard(
+    BuildContext context,
+    Professional professional,
+    BookingProvider bookingProvider,
+  ) {
+    final isSelected =
+        bookingProvider.state.selectedProfessionalId == professional.id;
     final availableSlots = professional.availableHours.length;
 
     return GestureDetector(
@@ -77,7 +93,11 @@ class ProfessionalsScreen extends StatelessWidget {
                   ),
                 ]
               : const [
-                  BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: Offset(0, 2)),
+                  BoxShadow(
+                    color: AppColors.shadow,
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
                 ],
         ),
         child: Row(
@@ -95,7 +115,9 @@ class ProfessionalsScreen extends StatelessWidget {
                 child: Text(
                   professional.name.split(' ').map((n) => n[0]).take(2).join(),
                   style: AppTextStyles.heading3.copyWith(
-                    color: isSelected ? AppColors.accentDark : AppColors.primary,
+                    color: isSelected
+                        ? AppColors.accentDark
+                        : AppColors.primary,
                     fontSize: 18,
                   ),
                 ),
@@ -109,18 +131,21 @@ class ProfessionalsScreen extends StatelessWidget {
                   Text(
                     professional.name,
                     style: AppTextStyles.subtitle.copyWith(
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 3),
-                  Text(
-                    professional.specialty,
-                    style: AppTextStyles.bodySmall,
-                  ),
+                  Text(professional.specialty, style: AppTextStyles.bodySmall),
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(Icons.star_rounded, size: 16, color: AppColors.accent),
+                      const Icon(
+                        Icons.star_rounded,
+                        size: 16,
+                        color: AppColors.accent,
+                      ),
                       const SizedBox(width: 3),
                       Text(
                         professional.rating.toString(),
@@ -139,7 +164,9 @@ class ProfessionalsScreen extends StatelessWidget {
                       Text(
                         '$availableSlots horários disponíveis',
                         style: AppTextStyles.caption.copyWith(
-                          color: availableSlots > 3 ? AppColors.success : AppColors.warning,
+                          color: availableSlots > 3
+                              ? AppColors.success
+                              : AppColors.warning,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -156,7 +183,11 @@ class ProfessionalsScreen extends StatelessWidget {
                   color: AppColors.accent,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check_rounded, color: AppColors.textOnAccent, size: 18),
+                child: const Icon(
+                  Icons.check_rounded,
+                  color: AppColors.textOnAccent,
+                  size: 18,
+                ),
               ),
           ],
         ),

@@ -1,11 +1,11 @@
 name: barberflow_app
 description: "BarberFlow - Aplicativo de agendamento de barbearia"
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.13.1
+  sdk: ^3.12.0
 
 dependencies:
   flutter:

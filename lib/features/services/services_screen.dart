@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/app_strings.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_dimensions.dart';
@@ -36,11 +35,16 @@ class _ServicesScreenState extends State<ServicesScreen> {
         ? allServices
         : allServices.where((s) {
             switch (_selectedCategoryIndex) {
-              case 1: return s.type == ServiceType.haircut;
-              case 2: return s.type == ServiceType.beard;
-              case 3: return s.type == ServiceType.eyebrow;
-              case 4: return s.type == ServiceType.haircutAndBeard;
-              default: return true;
+              case 1:
+                return s.type == ServiceType.haircut;
+              case 2:
+                return s.type == ServiceType.beard;
+              case 3:
+                return s.type == ServiceType.eyebrow;
+              case 4:
+                return s.type == ServiceType.haircutAndBeard;
+              default:
+                return true;
             }
           }).toList();
 
@@ -64,18 +68,30 @@ class _ServicesScreenState extends State<ServicesScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search_off_rounded, size: 56, color: AppColors.textTertiary),
+                        Icon(
+                          Icons.search_off_rounded,
+                          size: 56,
+                          color: AppColors.textTertiary,
+                        ),
                         const SizedBox(height: AppDimensions.spaceMD),
-                        Text('Nenhum serviço nesta categoria', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
+                        Text(
+                          'Nenhum serviço nesta categoria',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
                       ],
                     ),
                   )
                 : ListView.separated(
                     padding: const EdgeInsets.all(AppDimensions.spaceMD),
                     itemCount: filteredServices.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
-                      return _buildServiceCard(context, filteredServices[index]);
+                      return _buildServiceCard(
+                        context,
+                        filteredServices[index],
+                      );
                     },
                   ),
           ),
@@ -91,7 +107,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final cat = _categories[index];
           final isSelected = _selectedCategoryIndex == index;
@@ -100,10 +116,15 @@ class _ServicesScreenState extends State<ServicesScreen> {
               onTap: () => setState(() => _selectedCategoryIndex = index),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.primary : AppColors.surface,
-                  borderRadius: BorderRadius.circular(AppDimensions.borderRadiusFull),
+                  borderRadius: BorderRadius.circular(
+                    AppDimensions.borderRadiusFull,
+                  ),
                   border: Border.all(
                     color: isSelected ? AppColors.primary : AppColors.border,
                   ),
@@ -114,13 +135,17 @@ class _ServicesScreenState extends State<ServicesScreen> {
                     Icon(
                       cat.icon,
                       size: 16,
-                      color: isSelected ? AppColors.textOnPrimary : AppColors.textSecondary,
+                      color: isSelected
+                          ? AppColors.textOnPrimary
+                          : AppColors.textSecondary,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       cat.label,
                       style: AppTextStyles.chip.copyWith(
-                        color: isSelected ? AppColors.textOnPrimary : AppColors.textSecondary,
+                        color: isSelected
+                            ? AppColors.textOnPrimary
+                            : AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -149,7 +174,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.borderLight),
           boxShadow: const [
-            BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: Offset(0, 2)),
+            BoxShadow(
+              color: AppColors.shadow,
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
           ],
         ),
         child: Row(
@@ -189,11 +218,17 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(Icons.schedule_rounded, size: 14, color: AppColors.textTertiary),
+                      Icon(
+                        Icons.schedule_rounded,
+                        size: 14,
+                        color: AppColors.textTertiary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         '${service.duration} min',
-                        style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),

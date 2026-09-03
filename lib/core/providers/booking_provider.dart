@@ -1,6 +1,4 @@
 import 'package:flutter/foundation.dart';
-import '../../data/models/service_model.dart';
-import '../../data/models/professional_model.dart';
 
 class BookingState {
   final String? selectedServiceId;

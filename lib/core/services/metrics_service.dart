@@ -18,7 +18,7 @@ class MetricEvent {
     'event': eventName,
     'variant': variant,
     'timestamp': timestamp.toIso8601String(),
-    if (properties != null) ...properties!,
+    ...?properties,
   };
 
   factory MetricEvent.fromJson(Map<String, dynamic> json) => MetricEvent(

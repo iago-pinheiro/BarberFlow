@@ -1,8 +1,5 @@
 import 'dart:math';
 import '../models/appointment_model.dart';
-import '../models/service_model.dart';
-import '../models/professional_model.dart';
-import '../mock/mock_data.dart';
 
 class AppointmentRepository {
   final List<Appointment> _appointments = [];

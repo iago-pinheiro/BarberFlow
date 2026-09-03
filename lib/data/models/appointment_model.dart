@@ -1,5 +1,4 @@
 import '../../core/constants/app_strings.dart';
-import 'package:flutter/foundation.dart';
 
 enum AppointmentStatus { scheduled, completed, cancelled }
 

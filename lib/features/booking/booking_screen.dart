@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/app_strings.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_dimensions.dart';
@@ -25,8 +24,19 @@ class _BookingScreenState extends State<BookingScreen> {
   final _obsController = TextEditingController();
 
   final _availableTimes = const [
-    '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00',
+    '09:00',
+    '09:30',
+    '10:00',
+    '10:30',
+    '11:00',
+    '11:30',
+    '14:00',
+    '14:30',
+    '15:00',
+    '15:30',
+    '16:00',
+    '16:30',
+    '17:00',
   ];
 
   @override
@@ -47,7 +57,9 @@ class _BookingScreenState extends State<BookingScreen> {
         ? serviceRepo.getServiceById(bookingProvider.state.selectedServiceId!)
         : null;
     final professional = bookingProvider.state.selectedProfessionalId != null
-        ? profRepo.getProfessionalById(bookingProvider.state.selectedProfessionalId!)
+        ? profRepo.getProfessionalById(
+            bookingProvider.state.selectedProfessionalId!,
+          )
         : null;
 
     return Scaffold(
@@ -85,13 +97,21 @@ class _BookingScreenState extends State<BookingScreen> {
                     ? () => _confirmBooking(context, bookingProvider)
                     : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _canConfirm() ? AppColors.accent : AppColors.border,
-                  foregroundColor: _canConfirm() ? AppColors.primary : AppColors.textTertiary,
+                  backgroundColor: _canConfirm()
+                      ? AppColors.accent
+                      : AppColors.border,
+                  foregroundColor: _canConfirm()
+                      ? AppColors.primary
+                      : AppColors.textTertiary,
                 ),
                 child: Text(
-                  _canConfirm() ? 'Confirmar Agendamento' : 'Preencha todos os campos',
+                  _canConfirm()
+                      ? 'Confirmar Agendamento'
+                      : 'Preencha todos os campos',
                   style: AppTextStyles.buttonLarge.copyWith(
-                    color: _canConfirm() ? AppColors.primary : AppColors.textTertiary,
+                    color: _canConfirm()
+                        ? AppColors.primary
+                        : AppColors.textTertiary,
                   ),
                 ),
               ),
@@ -131,16 +151,24 @@ class _BookingScreenState extends State<BookingScreen> {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: isDone ? AppColors.accent : (isCurrent ? AppColors.primary : AppColors.border),
+                      color: isDone
+                          ? AppColors.accent
+                          : (isCurrent ? AppColors.primary : AppColors.border),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: isDone
-                          ? const Icon(Icons.check_rounded, size: 16, color: AppColors.textOnAccent)
+                          ? const Icon(
+                              Icons.check_rounded,
+                              size: 16,
+                              color: AppColors.textOnAccent,
+                            )
                           : Text(
                               '${index + 1}',
                               style: AppTextStyles.caption.copyWith(
-                                color: isCurrent ? AppColors.textOnPrimary : AppColors.textSecondary,
+                                color: isCurrent
+                                    ? AppColors.textOnPrimary
+                                    : AppColors.textSecondary,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -159,7 +187,11 @@ class _BookingScreenState extends State<BookingScreen> {
               Text(
                 steps[index],
                 style: AppTextStyles.caption.copyWith(
-                  color: isDone ? AppColors.accentDark : (isCurrent ? AppColors.textPrimary : AppColors.textTertiary),
+                  color: isDone
+                      ? AppColors.accentDark
+                      : (isCurrent
+                            ? AppColors.textPrimary
+                            : AppColors.textTertiary),
                   fontWeight: isCurrent ? FontWeight.w600 : FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
@@ -188,7 +220,11 @@ class _BookingScreenState extends State<BookingScreen> {
               color: AppColors.accent.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.content_cut_rounded, color: AppColors.accentDark, size: 22),
+            child: const Icon(
+              Icons.content_cut_rounded,
+              color: AppColors.accentDark,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -196,10 +232,7 @@ class _BookingScreenState extends State<BookingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(service.name, style: AppTextStyles.subtitle),
-                Text(
-                  '${service.duration} min',
-                  style: AppTextStyles.bodySmall,
-                ),
+                Text('${service.duration} min', style: AppTextStyles.bodySmall),
               ],
             ),
           ),
@@ -232,7 +265,10 @@ class _BookingScreenState extends State<BookingScreen> {
             child: Center(
               child: Text(
                 professional.name.split(' ').map((n) => n[0]).take(2).join(),
-                style: AppTextStyles.heading3.copyWith(color: AppColors.blue, fontSize: 14),
+                style: AppTextStyles.heading3.copyWith(
+                  color: AppColors.blue,
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
@@ -252,7 +288,10 @@ class _BookingScreenState extends State<BookingScreen> {
               const SizedBox(width: 3),
               Text(
                 professional.rating.toString(),
-                style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                style: AppTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ],
           ),
@@ -270,7 +309,11 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.calendar_today_rounded, size: 20, color: AppColors.textPrimary),
+            const Icon(
+              Icons.calendar_today_rounded,
+              size: 20,
+              color: AppColors.textPrimary,
+            ),
             const SizedBox(width: 8),
             Text('Data', style: AppTextStyles.heading3),
           ],
@@ -281,7 +324,7 @@ class _BookingScreenState extends State<BookingScreen> {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: days.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
               final day = days[index];
               final isSelected = _isSameDay(day, _selectedDate);
@@ -289,7 +332,9 @@ class _BookingScreenState extends State<BookingScreen> {
               final isWeekend = day.weekday == 6 || day.weekday == 7;
 
               return GestureDetector(
-                onTap: isWeekend ? null : () => setState(() => _selectedDate = day),
+                onTap: isWeekend
+                    ? null
+                    : () => setState(() => _selectedDate = day),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   width: 64,
@@ -297,7 +342,11 @@ class _BookingScreenState extends State<BookingScreen> {
                     color: isSelected ? AppColors.accent : AppColors.surface,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: isSelected ? AppColors.accent : (isWeekend ? AppColors.borderLight : AppColors.border),
+                      color: isSelected
+                          ? AppColors.accent
+                          : (isWeekend
+                                ? AppColors.borderLight
+                                : AppColors.border),
                     ),
                   ),
                   child: Column(
@@ -306,21 +355,33 @@ class _BookingScreenState extends State<BookingScreen> {
                       Text(
                         dayName,
                         style: AppTextStyles.caption.copyWith(
-                          color: isSelected ? AppColors.primary : (isWeekend ? AppColors.textTertiary : AppColors.textSecondary),
+                          color: isSelected
+                              ? AppColors.primary
+                              : (isWeekend
+                                    ? AppColors.textTertiary
+                                    : AppColors.textSecondary),
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '${day.day}',
                         style: AppTextStyles.heading3.copyWith(
-                          color: isSelected ? AppColors.primary : (isWeekend ? AppColors.textTertiary : AppColors.textPrimary),
+                          color: isSelected
+                              ? AppColors.primary
+                              : (isWeekend
+                                    ? AppColors.textTertiary
+                                    : AppColors.textPrimary),
                           fontSize: 20,
                         ),
                       ),
                       Text(
                         _getMonthName(day.month),
                         style: AppTextStyles.caption.copyWith(
-                          color: isSelected ? AppColors.primary : (isWeekend ? AppColors.textTertiary : AppColors.textSecondary),
+                          color: isSelected
+                              ? AppColors.primary
+                              : (isWeekend
+                                    ? AppColors.textTertiary
+                                    : AppColors.textSecondary),
                         ),
                       ),
                     ],
@@ -340,7 +401,11 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.access_time_rounded, size: 20, color: AppColors.textPrimary),
+            const Icon(
+              Icons.access_time_rounded,
+              size: 20,
+              color: AppColors.textPrimary,
+            ),
             const SizedBox(width: 8),
             Text('Horário', style: AppTextStyles.heading3),
           ],
@@ -355,7 +420,10 @@ class _BookingScreenState extends State<BookingScreen> {
               onTap: () => setState(() => _selectedTime = time),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.accent : AppColors.surface,
                   borderRadius: BorderRadius.circular(10),
@@ -367,7 +435,9 @@ class _BookingScreenState extends State<BookingScreen> {
                   time,
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.textPrimary,
                   ),
                 ),
               ),
@@ -384,7 +454,11 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.person_outline_rounded, size: 20, color: AppColors.textPrimary),
+            const Icon(
+              Icons.person_outline_rounded,
+              size: 20,
+              color: AppColors.textPrimary,
+            ),
             const SizedBox(width: 8),
             Text('Seus dados', style: AppTextStyles.heading3),
           ],
@@ -422,8 +496,12 @@ class _BookingScreenState extends State<BookingScreen> {
   void _confirmBooking(BuildContext context, BookingProvider bookingProvider) {
     final serviceRepo = ServiceRepository();
     final profRepo = ProfessionalRepository();
-    final service = serviceRepo.getServiceById(bookingProvider.state.selectedServiceId!)!;
-    final professional = profRepo.getProfessionalById(bookingProvider.state.selectedProfessionalId!)!;
+    final service = serviceRepo.getServiceById(
+      bookingProvider.state.selectedServiceId!,
+    )!;
+    final professional = profRepo.getProfessionalById(
+      bookingProvider.state.selectedProfessionalId!,
+    )!;
 
     final timeParts = _selectedTime!.split(':');
     final dateTime = DateTime(

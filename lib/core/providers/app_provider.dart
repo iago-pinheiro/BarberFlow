@@ -18,7 +18,10 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> trackEvent(String eventName, {Map<String, dynamic>? properties}) async {
+  Future<void> trackEvent(
+    String eventName, {
+    Map<String, dynamic>? properties,
+  }) async {
     await _metricsService.trackEvent(
       eventName,
       variant.name,
@@ -27,9 +30,9 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  @deprecated
+  @Deprecated('Use AppProvider.initialize and the AB test service instead.')
   void setVariant(ABVariant variant) {}
 
-  @deprecated
+  @Deprecated('Use AppProvider.initialize instead.')
   Future<void> loadVariant() async {}
 }
