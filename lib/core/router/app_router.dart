@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import '../../core/providers/app_provider.dart';
-import '../../core/constants/app_strings.dart';
 import '../../features/home/home_screen.dart';
+import '../../features/home/ab_test_metrics_screen.dart';
 import '../../features/services/services_screen.dart';
 import '../../features/professionals/professionals_screen.dart';
 import '../../features/booking/booking_screen.dart';
@@ -42,6 +41,10 @@ class AppRouter {
         GoRoute(
           path: '/appointments',
           builder: (context, state) => const AppointmentsScreen(),
+        ),
+        GoRoute(
+          path: '/ab-metrics',
+          builder: (context, state) => const ABTestMetricsScreen(),
         ),
       ],
     );

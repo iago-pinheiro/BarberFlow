@@ -1,20 +1,35 @@
 import 'package:flutter/foundation.dart';
-
-enum ABVariant { control, treatment }
+import '../services/ab_test_service.dart';
+import '../services/metrics_service.dart';
 
 class AppProvider extends ChangeNotifier {
-  ABVariant _variant = ABVariant.control;
+  final ABTestService _abTestService = ABTestService();
+  final MetricsService _metricsService = MetricsService();
 
-  ABVariant get variant => _variant;
-  bool get isTreatment => _variant == ABVariant.treatment;
+  ABTestService get abTest => _abTestService;
+  MetricsService get metrics => _metricsService;
 
-  void setVariant(ABVariant variant) {
-    _variant = variant;
+  ABVariant get variant => _abTestService.variant;
+  bool get isTreatment => _abTestService.isTreatment;
+
+  Future<void> initialize() async {
+    await _abTestService.initialize();
+    await _metricsService.initialize();
     notifyListeners();
   }
 
-  Future<void> loadVariant() async {
-    _variant = ABVariant.control;
+  Future<void> trackEvent(String eventName, {Map<String, dynamic>? properties}) async {
+    await _metricsService.trackEvent(
+      eventName,
+      variant.name,
+      properties: properties,
+    );
     notifyListeners();
   }
+
+  @deprecated
+  void setVariant(ABVariant variant) {}
+
+  @deprecated
+  Future<void> loadVariant() async {}
 }

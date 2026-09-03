@@ -23,7 +23,7 @@ class BarberFlowApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AppProvider()..loadVariant()),
+        ChangeNotifierProvider(create: (_) => AppProvider()..initialize()),
         ChangeNotifierProvider(create: (_) => BookingProvider()),
         ChangeNotifierProvider(create: (_) => AppointmentsProvider()),
       ],
