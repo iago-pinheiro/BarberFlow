@@ -10,32 +10,41 @@ import 'core/router/app_router.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const BarberFlowApp());
 }
 
-class BarberFlowApp extends StatelessWidget {
+class BarberFlowApp extends StatefulWidget {
   const BarberFlowApp({super.key});
+
+  @override
+  State<BarberFlowApp> createState() => _BarberFlowAppState();
+}
+
+class _BarberFlowAppState extends State<BarberFlowApp> {
+  late final AppProvider _appProvider;
+  late final AppRouter _appRouter;
+
+  @override
+  void initState() {
+    super.initState();
+    _appProvider = AppProvider()..initialize();
+    _appRouter = AppRouter(appProvider: _appProvider);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AppProvider()..initialize()),
+        ChangeNotifierProvider.value(value: _appProvider),
         ChangeNotifierProvider(create: (_) => BookingProvider()),
         ChangeNotifierProvider(create: (_) => AppointmentsProvider()),
       ],
-      child: Consumer<AppProvider>(
-        builder: (context, appProvider, child) {
-          return MaterialApp.router(
-            title: AppStrings.appName,
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            routerConfig: AppRouter(appProvider: appProvider).router,
-          );
-        },
+      child: MaterialApp.router(
+        title: AppStrings.appName,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        routerConfig: _appRouter.router,
       ),
     );
   }
