@@ -30,6 +30,11 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> clearMetrics() async {
+    await _metricsService.clearEvents();
+    notifyListeners();
+  }
+
   @Deprecated('Use AppProvider.initialize and the AB test service instead.')
   void setVariant(ABVariant variant) {}
 

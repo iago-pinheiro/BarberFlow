@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../core/constants/app_strings.dart';
 import '../../core/providers/app_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -188,6 +189,33 @@ class HomeVariantB extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 textStyle: AppTextStyles.buttonLarge.copyWith(fontSize: 14),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  appProvider.trackEvent(
+                    'cta_click',
+                    properties: {'section': 'promo', 'button': 'schedule_now'},
+                  );
+                  GoRouter.of(context).go('/booking');
+                },
+                icon: const Icon(Icons.schedule_rounded, size: 18),
+                label: const Text(AppStrings.btnScheduleNow),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  side: const BorderSide(color: Colors.white),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  textStyle: AppTextStyles.buttonLarge.copyWith(fontSize: 14),
+                ),
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/providers/app_provider.dart';
+import '../../core/services/ab_test_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 
@@ -53,7 +54,7 @@ class ABTestMetricsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCurrentVariant(dynamic variant) {
+  Widget _buildCurrentVariant(ABVariant variant) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -68,14 +69,14 @@ class ABTestMetricsScreen extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: variant.name == 'treatment'
+              color: variant == ABVariant.treatment
                   ? const Color(0xFF8B0000).withValues(alpha: 0.1)
                   : AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.science_rounded,
-              color: variant.name == 'treatment' ? const Color(0xFF8B0000) : AppColors.primary,
+              color: variant == ABVariant.treatment ? const Color(0xFF8B0000) : AppColors.primary,
             ),
           ),
           const SizedBox(width: 12),
@@ -85,7 +86,7 @@ class ABTestMetricsScreen extends StatelessWidget {
               children: [
                 Text('Sua Variante Atual', style: AppTextStyles.caption),
                 Text(
-                  variant.name == 'treatment' ? 'Variante B (Tratamento)' : 'Variante A (Controle)',
+                  variant == ABVariant.treatment ? 'Variante B (Tratamento)' : 'Variante A (Controle)',
                   style: AppTextStyles.heading3.copyWith(fontSize: 16),
                 ),
               ],
@@ -277,7 +278,7 @@ class ABTestMetricsScreen extends StatelessWidget {
             ),
           );
           if (confirmed == true) {
-            await appProvider.metrics.clearEvents();
+            await appProvider.clearMetrics();
           }
         },
         icon: const Icon(Icons.delete_outline_rounded, size: 18),
