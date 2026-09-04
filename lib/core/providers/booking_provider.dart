@@ -27,7 +27,8 @@ class BookingState {
   }) {
     return BookingState(
       selectedServiceId: selectedServiceId ?? this.selectedServiceId,
-      selectedProfessionalId: selectedProfessionalId ?? this.selectedProfessionalId,
+      selectedProfessionalId:
+          selectedProfessionalId ?? this.selectedProfessionalId,
       selectedDate: selectedDate ?? this.selectedDate,
       selectedTime: selectedTime ?? this.selectedTime,
       clientName: clientName ?? this.clientName,
@@ -53,12 +54,27 @@ class BookingProvider extends ChangeNotifier {
   BookingState get state => _state;
 
   void selectService(String serviceId) {
-    _state = _state.copyWith(selectedServiceId: serviceId);
+    if (_state.selectedServiceId == serviceId) return;
+
+    _state = BookingState(
+      selectedServiceId: serviceId,
+      selectedDate: _state.selectedDate,
+      clientName: _state.clientName,
+      observations: _state.observations,
+    );
     notifyListeners();
   }
 
   void selectProfessional(String professionalId) {
-    _state = _state.copyWith(selectedProfessionalId: professionalId);
+    if (_state.selectedProfessionalId == professionalId) return;
+
+    _state = BookingState(
+      selectedServiceId: _state.selectedServiceId,
+      selectedProfessionalId: professionalId,
+      selectedDate: _state.selectedDate,
+      clientName: _state.clientName,
+      observations: _state.observations,
+    );
     notifyListeners();
   }
 

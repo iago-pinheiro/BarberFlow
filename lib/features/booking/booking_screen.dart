@@ -6,6 +6,8 @@ import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_dimensions.dart';
 import '../../core/providers/booking_provider.dart';
 import '../../core/providers/appointments_provider.dart';
+import '../../data/models/professional_model.dart';
+import '../../data/models/service_model.dart';
 import '../../data/repositories/service_repository.dart';
 import '../../data/repositories/professional_repository.dart';
 
@@ -22,22 +24,6 @@ class _BookingScreenState extends State<BookingScreen> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _obsController = TextEditingController();
-
-  final _availableTimes = const [
-    '09:00',
-    '09:30',
-    '10:00',
-    '10:30',
-    '11:00',
-    '11:30',
-    '14:00',
-    '14:30',
-    '15:00',
-    '15:30',
-    '16:00',
-    '16:30',
-    '17:00',
-  ];
 
   @override
   void dispose() {
@@ -61,6 +47,10 @@ class _BookingScreenState extends State<BookingScreen> {
             bookingProvider.state.selectedProfessionalId!,
           )
         : null;
+    final services = serviceRepo.getServices();
+    final professionals = service == null
+        ? <Professional>[]
+        : profRepo.getAvailableProfessionals(service.id);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -78,15 +68,13 @@ class _BookingScreenState extends State<BookingScreen> {
           children: [
             _buildStepIndicator(bookingProvider),
             const SizedBox(height: AppDimensions.spaceLG),
-            if (service != null) _buildSelectedService(service),
-            if (professional != null) ...[
-              const SizedBox(height: 12),
-              _buildSelectedProfessional(professional),
-            ],
+            _buildServicePicker(services, bookingProvider),
+            const SizedBox(height: AppDimensions.spaceLG),
+            _buildProfessionalPicker(professionals, bookingProvider),
             const SizedBox(height: AppDimensions.spaceLG),
             _buildDatePicker(),
             const SizedBox(height: AppDimensions.spaceLG),
-            _buildTimePicker(),
+            _buildTimePicker(professional?.availableHours ?? const []),
             const SizedBox(height: AppDimensions.spaceLG),
             _buildClientInfo(),
             const SizedBox(height: AppDimensions.spaceXL),
@@ -203,100 +191,180 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _buildSelectedService(dynamic service) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.accent.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.accent.withValues(alpha: 0.2)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AppColors.accent.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.content_cut_rounded,
-              color: AppColors.accentDark,
-              size: 22,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(service.name, style: AppTextStyles.subtitle),
-                Text('${service.duration} min', style: AppTextStyles.bodySmall),
-              ],
-            ),
-          ),
-          Text(
-            'R\$ ${service.price.toStringAsFixed(2)}',
-            style: AppTextStyles.priceSmall,
-          ),
-        ],
-      ),
+  Widget _buildServicePicker(
+    List<Service> services,
+    BookingProvider bookingProvider,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.content_cut_rounded, size: 20),
+            const SizedBox(width: 8),
+            Text('Escolha o serviço', style: AppTextStyles.heading3),
+          ],
+        ),
+        const SizedBox(height: 12),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final cardWidth = (constraints.maxWidth - 12) / 2;
+            return Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: services.map((service) {
+                final isSelected =
+                    bookingProvider.state.selectedServiceId == service.id;
+                return GestureDetector(
+                  onTap: () {
+                    if (!isSelected) {
+                      setState(() => _selectedTime = null);
+                      bookingProvider.selectService(service.id);
+                    }
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: cardWidth,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.accent.withValues(alpha: 0.12)
+                          : AppColors.surface,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.accent
+                            : AppColors.borderLight,
+                        width: isSelected ? 2 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(service.name, style: AppTextStyles.subtitle),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${service.duration} min',
+                          style: AppTextStyles.bodySmall,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'R\$ ${service.price.toStringAsFixed(2)}',
+                          style: AppTextStyles.priceSmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+          },
+        ),
+      ],
     );
   }
 
-  Widget _buildSelectedProfessional(dynamic professional) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.blueBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.blue.withValues(alpha: 0.2)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AppColors.blue.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Text(
-                professional.name.split(' ').map((n) => n[0]).take(2).join(),
-                style: AppTextStyles.heading3.copyWith(
-                  color: AppColors.blue,
-                  fontSize: 14,
+  Widget _buildProfessionalPicker(
+    List<Professional> professionals,
+    BookingProvider bookingProvider,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.person_outline_rounded, size: 20),
+            const SizedBox(width: 8),
+            Text('Escolha o barbeiro', style: AppTextStyles.heading3),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (bookingProvider.state.selectedServiceId == null)
+          Text(
+            'Selecione um serviço para ver os barbeiros disponíveis.',
+            style: AppTextStyles.bodySmall,
+          )
+        else
+          ...professionals.map((professional) {
+            final isSelected =
+                bookingProvider.state.selectedProfessionalId == professional.id;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: GestureDetector(
+                onTap: () {
+                  if (!isSelected) {
+                    setState(() => _selectedTime = null);
+                    bookingProvider.selectProfessional(professional.id);
+                  }
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.blueBg : AppColors.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: isSelected
+                          ? AppColors.blue
+                          : AppColors.borderLight,
+                      width: isSelected ? 2 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: AppColors.blue.withValues(alpha: 0.15),
+                        foregroundColor: AppColors.blue,
+                        child: Text(
+                          professional.name
+                              .split(' ')
+                              .map((name) => name[0])
+                              .take(2)
+                              .join(),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              professional.name,
+                              style: AppTextStyles.subtitle,
+                            ),
+                            Text(
+                              professional.specialty,
+                              style: AppTextStyles.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.star_rounded,
+                        size: 16,
+                        color: AppColors.accent,
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        professional.rating.toString(),
+                        style: AppTextStyles.bodySmall.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      if (isSelected) ...[
+                        const SizedBox(width: 10),
+                        const Icon(
+                          Icons.check_circle_rounded,
+                          color: AppColors.blue,
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(professional.name, style: AppTextStyles.subtitle),
-                Text(professional.specialty, style: AppTextStyles.bodySmall),
-              ],
-            ),
-          ),
-          Row(
-            children: [
-              const Icon(Icons.star_rounded, size: 16, color: AppColors.accent),
-              const SizedBox(width: 3),
-              Text(
-                professional.rating.toString(),
-                style: AppTextStyles.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+            );
+          }),
+      ],
     );
   }
 
@@ -395,7 +463,7 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _buildTimePicker() {
+  Widget _buildTimePicker(List<String> availableTimes) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -411,39 +479,45 @@ class _BookingScreenState extends State<BookingScreen> {
           ],
         ),
         const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _availableTimes.map((time) {
-            final isSelected = _selectedTime == time;
-            return GestureDetector(
-              onTap: () => setState(() => _selectedTime = time),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected ? AppColors.accent : AppColors.surface,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: isSelected ? AppColors.accent : AppColors.border,
+        if (availableTimes.isEmpty)
+          Text(
+            'Escolha um barbeiro para ver os horários disponíveis.',
+            style: AppTextStyles.bodySmall,
+          )
+        else
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: availableTimes.map((time) {
+              final isSelected = _selectedTime == time;
+              return GestureDetector(
+                onTap: () => setState(() => _selectedTime = time),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.accent : AppColors.surface,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isSelected ? AppColors.accent : AppColors.border,
+                    ),
+                  ),
+                  child: Text(
+                    time,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textPrimary,
+                    ),
                   ),
                 ),
-                child: Text(
-                  time,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isSelected
-                        ? AppColors.primary
-                        : AppColors.textPrimary,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
+              );
+            }).toList(),
+          ),
       ],
     );
   }
