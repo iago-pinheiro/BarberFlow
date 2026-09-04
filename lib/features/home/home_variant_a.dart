@@ -24,6 +24,8 @@ class HomeVariantA extends StatelessWidget {
                 delegate: SliverChildListDelegate([
                   const SizedBox(height: 24),
                   _buildHeroSection(context, appProvider),
+                  const SizedBox(height: 16),
+                  _buildAppointmentsTab(context),
                   const SizedBox(height: 24),
                   _buildServicesGrid(context, appProvider),
                   const SizedBox(height: 24),
@@ -172,6 +174,23 @@ class HomeVariantA extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppointmentsTab(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () => GoRouter.of(context).go('/appointments'),
+        icon: const Icon(Icons.calendar_month_rounded),
+        label: const Text('Meus agendamentos'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.textPrimary,
+          side: const BorderSide(color: AppColors.borderLight),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          textStyle: AppTextStyles.buttonLarge,
         ),
       ),
     );

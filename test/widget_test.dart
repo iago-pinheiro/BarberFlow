@@ -33,4 +33,14 @@ void main() {
     expect(find.text('Escolha o serviço'), findsOneWidget);
     expect(find.text('Escolha o barbeiro'), findsOneWidget);
   });
+
+  testWidgets('Atalho abre meus agendamentos', (WidgetTester tester) async {
+    await tester.pumpWidget(const BarberFlowApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Meus agendamentos'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sem agendamentos'), findsOneWidget);
+  });
 }
