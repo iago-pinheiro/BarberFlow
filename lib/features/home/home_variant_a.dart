@@ -148,25 +148,27 @@ class HomeVariantA extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-              decoration: BoxDecoration(
-                color: AppColors.accent,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.calendar_today_rounded, size: 18, color: AppColors.primary),
-                  const SizedBox(width: 8),
-                  Text(
-                    'AGENDAR AGORA',
-                    style: AppTextStyles.buttonLarge.copyWith(
-                      color: AppColors.primary,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+            ElevatedButton.icon(
+              onPressed: () {
+                appProvider.trackEvent(
+                  'cta_click',
+                  properties: {'section': 'hero'},
+                );
+                GoRouter.of(context).go('/booking');
+              },
+              icon: const Icon(Icons.calendar_today_rounded, size: 18),
+              label: const Text('AGENDAR AGORA'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.accent,
+                foregroundColor: AppColors.primary,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                textStyle: AppTextStyles.buttonLarge.copyWith(fontSize: 14),
               ),
             ),
           ],
@@ -177,10 +179,30 @@ class HomeVariantA extends StatelessWidget {
 
   Widget _buildServicesGrid(BuildContext context, AppProvider appProvider) {
     final services = [
-      (name: 'Corte', icon: Icons.content_cut_rounded, price: 'R\$ 25', color: AppColors.blue),
-      (name: 'Barba', icon: Icons.auto_fix_high_rounded, price: 'R\$ 20', color: const Color(0xFF5856D6)),
-      (name: 'Corte + Barba', icon: Icons.auto_awesome_rounded, price: 'R\$ 45', color: AppColors.accentDark),
-      (name: 'Sobrancelha', icon: Icons.brush_rounded, price: 'R\$ 15', color: const Color(0xFFFF6B6B)),
+      (
+        name: 'Corte',
+        icon: Icons.content_cut_rounded,
+        price: 'R\$ 25',
+        color: AppColors.blue,
+      ),
+      (
+        name: 'Barba',
+        icon: Icons.auto_fix_high_rounded,
+        price: 'R\$ 20',
+        color: const Color(0xFF5856D6),
+      ),
+      (
+        name: 'Corte + Barba',
+        icon: Icons.auto_awesome_rounded,
+        price: 'R\$ 45',
+        color: AppColors.accentDark,
+      ),
+      (
+        name: 'Sobrancelha',
+        icon: Icons.brush_rounded,
+        price: 'R\$ 15',
+        color: const Color(0xFFFF6B6B),
+      ),
     ];
 
     return Column(
@@ -192,7 +214,10 @@ class HomeVariantA extends StatelessWidget {
             Text('Serviços', style: AppTextStyles.heading3),
             TextButton(
               onPressed: () => GoRouter.of(context).go('/services'),
-              child: Text('Ver todos', style: AppTextStyles.label.copyWith(color: AppColors.accent)),
+              child: Text(
+                'Ver todos',
+                style: AppTextStyles.label.copyWith(color: AppColors.accent),
+              ),
             ),
           ],
         ),
@@ -210,7 +235,10 @@ class HomeVariantA extends StatelessWidget {
             final s = services[index];
             return GestureDetector(
               onTap: () {
-                appProvider.trackEvent('cta_click', properties: {'section': 'services', 'service': s.name});
+                appProvider.trackEvent(
+                  'cta_click',
+                  properties: {'section': 'services', 'service': s.name},
+                );
                 GoRouter.of(context).go('/services');
               },
               child: Container(
@@ -220,7 +248,11 @@ class HomeVariantA extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.borderLight),
                   boxShadow: const [
-                    BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: Offset(0, 2)),
+                    BoxShadow(
+                      color: AppColors.shadow,
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
                   ],
                 ),
                 child: Column(
@@ -236,8 +268,19 @@ class HomeVariantA extends StatelessWidget {
                       child: Icon(s.icon, color: s.color, size: 22),
                     ),
                     const SizedBox(height: 8),
-                    Text(s.name, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
-                    Text(s.price, style: AppTextStyles.priceSmall.copyWith(color: s.color, fontSize: 13)),
+                    Text(
+                      s.name,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      s.price,
+                      style: AppTextStyles.priceSmall.copyWith(
+                        color: s.color,
+                        fontSize: 13,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -248,12 +291,35 @@ class HomeVariantA extends StatelessWidget {
     );
   }
 
-  Widget _buildProfessionalsList(BuildContext context, AppProvider appProvider) {
+  Widget _buildProfessionalsList(
+    BuildContext context,
+    AppProvider appProvider,
+  ) {
     final professionals = [
-      (name: 'Carlos Silva', specialty: 'Corte & Barba', initials: 'CS', rating: 5.0),
-      (name: 'João Pedro', specialty: 'Barba & Sobr.', initials: 'JP', rating: 4.0),
-      (name: 'Ricardo A.', specialty: 'Corte Premium', initials: 'RA', rating: 5.0),
-      (name: 'Fernanda C.', specialty: 'Sobrancelha', initials: 'FC', rating: 4.0),
+      (
+        name: 'Carlos Silva',
+        specialty: 'Corte & Barba',
+        initials: 'CS',
+        rating: 5.0,
+      ),
+      (
+        name: 'João Pedro',
+        specialty: 'Barba & Sobr.',
+        initials: 'JP',
+        rating: 4.0,
+      ),
+      (
+        name: 'Ricardo A.',
+        specialty: 'Corte Premium',
+        initials: 'RA',
+        rating: 5.0,
+      ),
+      (
+        name: 'Fernanda C.',
+        specialty: 'Sobrancelha',
+        initials: 'FC',
+        rating: 4.0,
+      ),
     ];
 
     return Column(
@@ -265,7 +331,10 @@ class HomeVariantA extends StatelessWidget {
             Text('Barbeiros', style: AppTextStyles.heading3),
             TextButton(
               onPressed: () => GoRouter.of(context).go('/professionals'),
-              child: Text('Ver todos', style: AppTextStyles.label.copyWith(color: AppColors.accent)),
+              child: Text(
+                'Ver todos',
+                style: AppTextStyles.label.copyWith(color: AppColors.accent),
+              ),
             ),
           ],
         ),
@@ -279,7 +348,10 @@ class HomeVariantA extends StatelessWidget {
               final p = professionals[index];
               return GestureDetector(
                 onTap: () {
-                  appProvider.trackEvent('cta_click', properties: {'section': 'professionals'});
+                  appProvider.trackEvent(
+                    'cta_click',
+                    properties: {'section': 'professionals'},
+                  );
                   GoRouter.of(context).go('/professionals');
                 },
                 child: Container(
@@ -290,7 +362,11 @@ class HomeVariantA extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: AppColors.borderLight),
                     boxShadow: const [
-                      BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: Offset(0, 2)),
+                      BoxShadow(
+                        color: AppColors.shadow,
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                      ),
                     ],
                   ),
                   child: Column(
@@ -306,23 +382,35 @@ class HomeVariantA extends StatelessWidget {
                         child: Center(
                           child: Text(
                             p.initials,
-                            style: AppTextStyles.heading3.copyWith(color: AppColors.accentDark, fontSize: 15),
+                            style: AppTextStyles.heading3.copyWith(
+                              color: AppColors.accentDark,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         p.name,
-                        style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.star_rounded, size: 12, color: AppColors.accent),
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 12,
+                            color: AppColors.accent,
+                          ),
                           const SizedBox(width: 2),
-                          Text(p.rating.toString(), style: AppTextStyles.caption),
+                          Text(
+                            p.rating.toString(),
+                            style: AppTextStyles.caption,
+                          ),
                         ],
                       ),
                     ],

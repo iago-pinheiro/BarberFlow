@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:barberflow_app/main.dart';
 
 void main() {
-  testWidgets('App inicia e renderiza corretamente', (WidgetTester tester) async {
+  testWidgets('App inicia e renderiza corretamente', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const BarberFlowApp());
     await tester.pumpAndSettle();
 
@@ -17,5 +19,18 @@ void main() {
     final hasBarberFlow = find.text('BarberFlow').evaluate().isNotEmpty;
     final hasOla = find.text('Olá!').evaluate().isNotEmpty;
     expect(hasBarberFlow || hasOla, isTrue);
+  });
+
+  testWidgets('CTA abre agendamento com seletores', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const BarberFlowApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('AGENDAR AGORA').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Escolha o serviço'), findsOneWidget);
+    expect(find.text('Escolha o barbeiro'), findsOneWidget);
   });
 }
