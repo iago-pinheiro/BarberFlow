@@ -52,7 +52,7 @@ void main() {
     expect(find.text('Variante A (Controle)'), findsNWidgets(2));
     expect(find.text('Variante B (Tratamento)'), findsOneWidget);
     expect(find.text('Taxa de Conversão'), findsNWidgets(2));
-    expect(find.text('100.0%'), findsNWidgets(2));
+    expect(find.text('50.0%'), findsNWidgets(2));
     expect(find.text('0.0%'), findsNWidgets(2));
   });
 
@@ -85,7 +85,7 @@ void main() {
     await tester.tap(find.text('Cancelar'));
     await tester.pumpAndSettle();
 
-    expect(provider.metrics.events, hasLength(2));
-    expect(find.text('100.0%'), findsNWidgets(2));
+    expect(provider.metrics.events, hasLength(3));
+    expect(find.text('50.0%'), findsNWidgets(2));
   });
 }

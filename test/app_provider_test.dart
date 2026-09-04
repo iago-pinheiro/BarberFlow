@@ -14,7 +14,7 @@ void main() {
   });
 
   group('AppProvider', () {
-    test('initialize carrega variante e métricas', () async {
+    test('initialize carrega variante e registra visualização', () async {
       final provider = AppProvider();
       var notified = 0;
       provider.addListener(() => notified++);
@@ -23,7 +23,7 @@ void main() {
 
       expect(provider.variant, ABVariant.treatment);
       expect(provider.isTreatment, isTrue);
-      expect(provider.metrics.events, isEmpty);
+      expect(provider.metrics.getViewsForVariant('treatment'), 1);
       expect(provider.abTest.variant, ABVariant.treatment);
       expect(notified, 1);
     });
@@ -47,7 +47,7 @@ void main() {
 
       await provider.trackEvent('screen_view');
 
-      expect(provider.metrics.getViewsForVariant('treatment'), 1);
+      expect(provider.metrics.getViewsForVariant('treatment'), 2);
       expect(provider.metrics.getViewsForVariant('control'), 0);
     });
 
@@ -57,7 +57,7 @@ void main() {
 
       await provider.trackEvent('cta_click', properties: {'section': 'hero'});
 
-      final event = provider.metrics.events.single;
+      final event = provider.metrics.events.last;
       expect(event.properties, {'section': 'hero'});
     });
   });

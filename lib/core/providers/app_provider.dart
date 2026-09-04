@@ -15,6 +15,7 @@ class AppProvider extends ChangeNotifier {
   Future<void> initialize() async {
     await _abTestService.initialize();
     await _metricsService.initialize();
+    await _metricsService.trackEvent('screen_view', variant.name);
     notifyListeners();
   }
 

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_dimensions.dart';
+import '../../core/providers/app_provider.dart';
 import '../../core/providers/booking_provider.dart';
 import '../../core/providers/appointments_provider.dart';
 import '../../data/models/professional_model.dart';
@@ -567,7 +568,12 @@ class _BookingScreenState extends State<BookingScreen> {
         _nameController.text.isNotEmpty;
   }
 
-  void _confirmBooking(BuildContext context, BookingProvider bookingProvider) {
+  Future<void> _confirmBooking(
+    BuildContext context,
+    BookingProvider bookingProvider,
+  ) async {
+    final appointmentsProvider = context.read<AppointmentsProvider>();
+    final appProvider = context.read<AppProvider>();
     final serviceRepo = ServiceRepository();
     final profRepo = ProfessionalRepository();
     final service = serviceRepo.getServiceById(
@@ -586,7 +592,7 @@ class _BookingScreenState extends State<BookingScreen> {
       int.parse(timeParts[1]),
     );
 
-    context.read<AppointmentsProvider>().scheduleAppointment(
+    await appointmentsProvider.scheduleAppointment(
       serviceId: service.id,
       professionalId: professional.id,
       dateTime: dateTime,
@@ -594,6 +600,9 @@ class _BookingScreenState extends State<BookingScreen> {
       clientName: _nameController.text,
       observations: _obsController.text,
     );
+    await appProvider.trackEvent('booking_confirmed');
+
+    if (!context.mounted) return;
 
     bookingProvider.reset();
     _selectedTime = null;

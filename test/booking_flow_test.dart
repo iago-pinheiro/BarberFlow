@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:barberflow_app/core/providers/app_provider.dart';
 import 'package:barberflow_app/main.dart';
 
 void main() {
@@ -48,6 +50,12 @@ void main() {
     expect(find.text('Concluir'), findsOneWidget);
     expect(find.text('✂️ Corte'), findsOneWidget);
     expect(find.text('Carlos Silva'), findsOneWidget);
+
+    final appProvider = Provider.of<AppProvider>(
+      tester.element(find.text('Meus Agendamentos')),
+      listen: false,
+    );
+    expect(appProvider.metrics.getBookingsForVariant('control'), 1);
   });
 
   testWidgets('botão fica desabilitado até preencher todos os campos', (
